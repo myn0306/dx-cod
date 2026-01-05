@@ -1,0 +1,515 @@
+const preQuestions = [
+  {
+    icon: "person",
+    text: "あなたの現在の状況に最も近いものを選んでください",
+    type: "single",
+    options: [
+      "DX推進部門・CDO候補",
+      "IT部門からDX領域へ移行中",
+      "事業部門でDXプロジェクトを担当",
+      "経営層（DX戦略に関心）",
+      "DX人材を目指して学習中",
+      "その他"
+    ]
+  },
+  {
+    icon: "thought",
+    text: "DXに取り組む上で、現在感じている課題を全て選んでください（複数選択可）",
+    type: "multiple",
+    options: [
+      "技術的な知識が不足している",
+      "経営層の理解が得られない",
+      "現場の抵抗が強い",
+      "予算・リソースが確保できない",
+      "自分のスキルに自信がない",
+      "孤独感・孤立感を感じる",
+      "短期的な成果を求められる",
+      "特にない"
+    ]
+  },
+  {
+    icon: "growth",
+    text: "過去にこのような経験はありますか？（複数選択可）",
+    type: "multiple",
+    options: [
+      "DXプロジェクトをリードした",
+      "組織変革で抵抗勢力と対峙した",
+      "技術導入の失敗を経験した",
+      "経営層へのプレゼンで苦労した",
+      "部門間の調整で板挟みになった",
+      "まだない"
+    ]
+  },
+  {
+    icon: "star",
+    text: "DX推進で最も大切にしたいことを3つ選んでください",
+    type: "multiple",
+    maxSelect: 3,
+    options: [
+      "技術的な正しさ・品質",
+      "ビジネス成果・ROI",
+      "組織文化の変革",
+      "人材育成・能力開発",
+      "顧客体験の向上",
+      "業務効率化",
+      "イノベーション創出",
+      "持続可能な変革",
+      "倫理的配慮",
+      "自分自身の成長"
+    ]
+  },
+  {
+    icon: "rainbow",
+    text: "3年後、あなたはどんな存在でありたいですか？",
+    type: "single",
+    options: [
+      "技術に精通したDXアーキテクト",
+      "組織を動かすチェンジリーダー",
+      "技術と経営の橋渡し役",
+      "人を育てるDXエバンジェリスト",
+      "まだ明確ではない"
+    ]
+  }
+];// A. 技術の目利き力（4問）
+{
+  text: "新しいツールを導入する際、「最新技術だから」という理由だけで決めることはない",
+  layer: "tech",
+  category: "judgment"
+},
+{
+  text: "AIやクラウドの「できないこと」「リスク」を、具体的に説明できる",
+  layer: "tech",
+  category: "judgment"
+},
+{
+  text: "古いシステムの価値を認めつつ、段階的な移行計画を描ける",
+  layer: "tech",
+  category: "judgment"
+},
+{
+  text: "技術トレンドに触れても、冷静に自組織との距離を測れる",
+  layer: "tech",
+  category: "judgment"
+},
+
+// B. データとビジネスの接続（4問）
+{
+  text: "データの数字を見て、「これは何を意味するか」「次のアクションは何か」を言語化できる",
+  layer: "tech",
+  category: "data"
+},
+{
+  text: "DXの成果を測る具体的なKPIを設定し、定期的に振り返っている",
+  layer: "tech",
+  category: "data"
+},
+{
+  text: "データを特定の人だけが見られる状態から、必要な人が見られる状態に変えている",
+  layer: "tech",
+  category: "data"
+},
+{
+  text: "技術投資の判断を、データに基づいて経営層に説明できる",
+  layer: "tech",
+  category: "data"
+}// C. 対話と翻訳の力（4問）
+{
+  text: "経営層・現場・技術者、それぞれに響く言葉で同じ内容を語れる",
+  layer: "org",
+  category: "dialogue"
+},
+{
+  text: "プレゼンを「説得の場」ではなく「対話の場」として設計している",
+  layer: "org",
+  category: "dialogue"
+},
+{
+  text: "反対意見を聞いて、その背景にある価値観を理解しようとする",
+  layer: "org",
+  category: "dialogue"
+},
+{
+  text: "部門間の温度差や対立を事前に予測し、調整の手を打てる",
+  layer: "org",
+  category: "dialogue"
+},
+
+// D. 変化への伴走（4問）
+{
+  text: "失敗が起きたとき、犯人探しではなく「学び」を共有する文化を作っている",
+  layer: "org",
+  category: "change"
+},
+{
+  text: "大きな変革の前に、小さな成功体験を意図的に設計している",
+  layer: "org",
+  category: "change"
+},
+{
+  text: "抵抗勢力の声を「貴重な情報源」として扱える",
+  layer: "org",
+  category: "change"
+},
+{
+  text: "世代間・職種間で互いに学び合える場を作っている",
+  layer: "org",
+  category: "change"
+},
+
+// E. 人材育成と文化づくり（4問）
+{
+  text: "「教える」ではなく「学び続ける文化」を育てている",
+  layer: "org",
+  category: "culture"
+},
+{
+  text: "ITリテラシーの違いを、それぞれのペースで尊重している",
+  layer: "org",
+  category: "culture"
+},
+{
+  text: "ツールを押し付けず、選択肢を示して自分で選べるよう支援している",
+  layer: "org",
+  category: "culture"
+},
+{
+  text: "「分からないことを聞ける空気」を意識的に作っている",
+  layer: "org",
+  category: "culture"
+},
+
+// F. 政治力と資源確保（4問）
+{
+  text: "経営層から信頼され、必要な権限を得ている",
+  layer: "org",
+  category: "politics"
+},
+{
+  text: "新しい施策のために、古い業務を具体的に廃止する決断をしている",
+  layer: "org",
+  category: "politics"
+},
+{
+  text: "短期的な成果が見えなくても、未来のためのリソースを死守している",
+  layer: "org",
+  category: "politics"
+},
+{
+  text: "全体最適のために、一時的に嫌われる覚悟を持っている",
+  layer: "org",
+  category: "politics"
+}// G. 組織の存在意義との接続（3問）
+{
+  text: "「なぜDXをするのか」を、効率化以上の言葉で語れる",
+  layer: "philosophy",
+  category: "purpose"
+},
+{
+  text: "デジタル化で失われるもの（対面の温かさ、手作業の価値）に誠実な眼差しを持っている",
+  layer: "philosophy",
+  category: "purpose"
+},
+{
+  text: "短期的な成果圧力と、長期的な変容の現実の間で、戦略的なバランスを取れている",
+  layer: "philosophy",
+  category: "purpose"
+},
+
+// H. 不確実性への向き合い方（3問）
+{
+  text: "DXに正解がないことを受け入れ、走りながら軌道修正する勇気を持っている",
+  layer: "philosophy",
+  category: "uncertainty"
+},
+{
+  text: "「分からない」「一緒に考えたい」と正直に伝えられる",
+  layer: "philosophy",
+  category: "uncertainty"
+},
+{
+  text: "変化が遅くても、人が変わるには時間がかかることを理解し、焦らず伴走できる",
+  layer: "philosophy",
+  category: "uncertainty"
+},
+
+// I. 倫理と人間中心（3問）
+{
+  text: "「技術的に可能か」だけでなく「人を幸せにするか」を問い続けている",
+  layer: "philosophy",
+  category: "ethics"
+},
+{
+  text: "自動化の目的を、人が本来向き合うべきことに時間を使えるようにすることだと理解している",
+  layer: "philosophy",
+  category: "ethics"
+},
+{
+  text: "デジタルが苦手な人を置き去りにしない仕組みを意図的に作っている",
+  layer: "philosophy",
+  category: "ethics"
+},
+
+// J. 外部との接続（3問）
+{
+  text: "社外に壁打ち相手や同志がいて、客観的な視点を得ている",
+  layer: "philosophy",
+  category: "external"
+},
+{
+  text: "社内の効率化だけでなく、エンドユーザーの喜びを議論の中心に置いている",
+  layer: "philosophy",
+  category: "external"
+},
+{
+  text: "他業界の事例から謙虚に学び、自組織に翻訳している",
+  layer: "philosophy",
+  category: "external"
+}// K. 自分の芯のメンテナンス（4問）
+{
+  text: "忙しくても、自分がなぜ変革を志したのかを思い出す時間を確保している",
+  layer: "sustain",
+  category: "core"
+},
+{
+  text: "孤独を受け入れ、適切に感情をリセットする術を持っている",
+  layer: "sustain",
+  category: "core"
+},
+{
+  text: "完璧である必要はないと、自分に許可している",
+  layer: "sustain",
+  category: "core"
+},
+{
+  text: "体と心の限界信号に気づき、立ち止まる判断ができる",
+  layer: "sustain",
+  category: "core"
+},
+
+// L. 楽しさと意味の両立（4問）
+{
+  text: "自己診断を「やらされ感」ではなく、成長確認のワクワクとして捉えられる",
+  layer: "sustain",
+  category: "joy"
+},
+{
+  text: "できていないことを責めず、「伸びしろ」として観察できる",
+  layer: "sustain",
+  category: "joy"
+},
+{
+  text: "小さな達成を自分で祝う習慣がある",
+  layer: "sustain",
+  category: "joy"
+},
+{
+  text: "DXの仕事そのものに、楽しさを見出せている",
+  layer: "sustain",
+  category: "joy"
+}// 4層スキルをレーダーチャートで可視化
+const layerScores = {
+  tech: 0,        // 技術的理解
+  org: 0,         // 組織的影響力
+  philosophy: 0,  // 哲学的軸
+  sustain: 0      // サステナビリティ
+};
+
+// 各層のスコアを100%換算
+function calculateLayerScores() {
+  const techQuestions = 12;
+  const orgQuestions = 16;
+  const philQuestions = 12;
+  const sustainQuestions = 8;
+  
+  // ◎=5, ○=3, △=1, ?=0 として計算
+  const techMax = techQuestions * 5;
+  const orgMax = orgQuestions * 5;
+  const philMax = philQuestions * 5;
+  const sustainMax = sustainQuestions * 5;
+  
+  return {
+    tech: Math.min(100, (techScore / techMax) * 100),
+    org: Math.min(100, (orgScore / orgMax) * 100),
+    philosophy: Math.min(100, (philScore / philMax) * 100),
+    sustain: Math.min(100, (sustainScore / sustainMax) * 100)
+  };
+}<div class="radar-chart-section">
+  <h3 class="section-title">DX人材 4層スキルマップ</h3>
+  <canvas id="radarChart" width="400" height="400"></canvas>
+  <div class="layer-legend">
+    <div class="legend-item">
+      <span class="legend-color" style="background: #3b82f6;"></span>
+      <span>技術的理解</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-color" style="background: #06b6d4;"></span>
+      <span>組織的影響力</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-color" style="background: #0891b2;"></span>
+      <span>哲学的軸</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-color" style="background: #0ea5e9;"></span>
+      <span>サステナビリティ</span>
+    </div>
+  </div>
+</div>function renderRadarChart(scores) {
+  const ctx = document.getElementById('radarChart').getContext('2d');
+  
+  new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: [
+        '技術的理解',
+        '組織的影響力',
+        '哲学的軸',
+        'サステナビリティ'
+      ],
+      datasets: [{
+        label: 'あなたのスコア',
+        data: [
+          scores.tech,
+          scores.org,
+          scores.philosophy,
+          scores.sustain
+        ],
+        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+        borderColor: 'rgba(59, 130, 246, 1)',
+        borderWidth: 3,
+        pointBackgroundColor: 'rgba(59, 130, 246, 1)',
+        pointBorderColor: '#fff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: 'rgba(59, 130, 246, 1)'
+      }]
+    },
+    options: {
+      scales: {
+        r: {
+          beginAtZero: true,
+          max: 100,
+          ticks: {
+            stepSize: 20
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          display: false
+        }
+      }
+    }
+  });
+}function generateGrowthMap(scores) {
+  const sorted = Object.entries(scores)
+    .map(([key, value]) => ({
+      layer: getLayerName(key),
+      score: value,
+      key: key
+    }))
+    .sort((a, b) => a.score - b.score);
+  
+  return `
+    <div class="growth-map-section">
+      <h3 class="section-title">あなたの成長マップ</h3>
+      
+      <div class="strength-area">
+        <h4>💪 あなたの強み</h4>
+        <p>${sorted[3].layer}: ${Math.round(sorted[3].score)}%</p>
+        <p class="growth-advice">${getStrengthAdvice(sorted[3].key)}</p>
+      </div>
+      
+      <div class="growth-area">
+        <h4>🌱 伸びしろ領域</h4>
+        <p>${sorted[0].layer}: ${Math.round(sorted[0].score)}%</p>
+        <p class="growth-advice">${getGrowthAdvice(sorted[0].key)}</p>
+      </div>
+      
+      <div class="balance-check">
+        <h4>⚖️ バランスチェック</h4>
+        <p>${getBalanceAdvice(scores)}</p>
+      </div>
+    </div>
+  `;
+}/* レーダーチャートセクション */
+.radar-chart-section {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 20px;
+  padding: 32px;
+  margin-bottom: 32px;
+  border: 2px solid #e2e8f0;
+  text-align: center;
+}
+
+#radarChart {
+  max-width: 400px;
+  margin: 32px auto;
+}
+
+.layer-legend {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+/* 成長マップ */
+.growth-map-section {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border-radius: 20px;
+  padding: 32px;
+  margin-bottom: 32px;
+  border-left: 5px solid #f59e0b;
+  text-align: left;
+}
+
+.strength-area,
+.growth-area,
+.balance-check {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.strength-area h4 {
+  color: #14532d;
+  margin: 0 0 12px 0;
+  font-size: 18px;
+}
+
+.growth-area h4 {
+  color: #92400e;
+  margin: 0 0 12px 0;
+  font-size: 18px;
+}
+
+.balance-check h4 {
+  color: #1e40af;
+  margin: 0 0 12px 0;
+  font-size: 18px;
+}
+
+.growth-advice {
+  font-size: 14px;
+  color: #64748b;
+  line-height: 1.7;
+  margin-top: 8px;
+}<!-- Chart.js for レーダーチャート -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
